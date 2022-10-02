@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>WASM🚀🚀 Graphs📈📈</title>
+</head>
+<body style="margin: 0; overflow: hidden;">
+    <svg xmlns="http://www.w3.org/2000/svg">
+        <style>
+            polyline{
+                marker-mid: url(#arrowhead);
+                opacity: 0.6;
+            }
+            <!-- *{ transition: all 0.2s linear } -->
+        </style>
+        <defs>
+            <!-- <marker id="arrowhead" markerWidth="3" markerHeight="2.1" refX="3" refY="1.05" orient="auto"
+                markerUnits="userSpaceOnUse">
+                <polygon points="0 0, 3 1.05, 0 2.1" />
+            </marker> -->
+            <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto" markerUnits="userSpaceOnUse" fill-opacity="1" fill="#000">
+                <polyline points="0 0, 10 3.5, 0 7" />
+            </marker>
+        </defs>
+    </svg>
+    <div style="position: fixed; top:0; font-family: monospace; background:#aaaa; padding: 10px; border-radius: 3px;">
+        <h1 style="margin-top: 0;">Control panel</h1>
+        <h3 style="margin-top:0;">FPS: <span class="fps"></span></h3>
+        <input type="checkbox" name="show-conn">
+        <label for="show-conn">Show connections?</label>
+        <br>
+        <input type="checkbox" name="two-way-conn">
+        <label for="two-way-conn">Only calculate two-way connections</label>
+        <br>
+        <input name="disable-temp" type="checkbox">
+        <label for="disable-temp">Disable "cooling"</label>
+        <br>
+        <br>
+        <input type="range" min="0" max="12" value="3" name="connections">
+        <label for="connections">Connections per person: <span class="connections-count">3</span></label>
+        <br>
+        <input type="range" min="-1000" max="100" value="-30" step="10" name="charge">
+        <label for="charge">Charge strength: <span class="charge-value">-30</span></label>
+        <br>
+        <input type="range" min="0" max="1" value="0.4" step="0.01" name="drag">
+        <label for="drag">Drag: <span class="drag-value">0.4</span></label>
+        <br>
+        <div style="padding-top: 10px">
+            <span>Only render these nodes: </span>
+            <input type="file" name="selective" style="width: 150px" accept=".csv,text/x-csv">
+            <br>
+            <input type="button" name="selective-reset" value="Reset filter">
+        </div>
+        <br>
+        <input name="reheat" type="button" value="Reheat simulation">
+        <input name="restart" type="button" value="Restart simulation">
+        <br>
+        <input name="export" type="button" value="Export as SVG">
+    </div>
+
+    <script>
+        window.sqrt = Math.sqrt;
+        window.min = Math.min;
+    </script>
+
+    <script src="./src/data/graph.js"></script>
+    <script src="./src/data/people.js"></script>
+
+    <script src="./src/index.js"></script>
+</body>
+</html>

@@ -1,2 +1,4 @@
 # staq-graph-theory
-Repository containing souce code for the STAQ graph theory/sociology report
+## 👋 Hello!
+This repository contains the source code for the STAQ report on graph theory and sociology.
+Files containing sensitive data (e.g. raw output data, etc) are marked with `<sensitive>`.

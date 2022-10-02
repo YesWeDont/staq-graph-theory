@@ -1,0 +1,20 @@
+{
+  "name": "outlook-crawler",
+  "version": "0.0.0",
+  "description": "Crawling for the six degrees of separation",
+  "main": "index.js",
+  "bin": "index.js",
+  "scripts": {
+    "test": "node .",
+    "build": "pkg . -C GZip -t win",
+    "esbuild": "esbuild src/index.ts --bundle --outfile=dist/index.js --minify --watch"
+  },
+  "author": "YesWeDont, cabbagedraft, tzhu8",
+  "license": "MIT",
+  "dependencies": {
+    "puppeteer": "^17.0.0"
+  },
+  "devDependencies": {
+    "@types/d3": "^7.4.0"
+  }
+}
