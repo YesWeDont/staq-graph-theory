@@ -7,7 +7,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     let forcesEnabled = true;
     let twoWayOnly = false;
     let showConn = false;
-    let cooling = true;
     
     let charge = -30;
     let numLinks = 3;
@@ -18,31 +17,31 @@ document.addEventListener("DOMContentLoaded", async () => {
     const color = d3.scaleOrdinal(d3.schemeCategory10);
     let {simulation, cleanup} = runSim(transform(rawData, 3));
 
-    document.querySelector("input[name=show-conn]").addEventListener("change", ({target})=>showConn = target.checked);
+    document.querySelector("input[name=show-conn]").addEventListener("input", ({target})=>showConn = target.checked);
 
-    // CONTROL PANEL
-    document.querySelector("input[name=two-way-conn]").addEventListener("change", ({target})=>{
+    // CONTROL PANE:
+    document.querySelector("input[name=two-way-conn]").addEventListener("input", ({target})=>{
         twoWayOnly = target.checked;
         updateGraph();
     });
     
-    document.querySelector("input[name=charge]").addEventListener("change", ({target})=>{
+    document.querySelector("input[name=charge]").addEventListener("input", ({target})=>{
         simulation.force('charge').strength(+(document.querySelector("span.charge-value").innerHTML = charge = +target.value));
         restart();
     });
 
-    document.querySelector("input[name=drag]").addEventListener("change", ({target})=>{
+    document.querySelector("input[name=drag]").addEventListener("input", ({target})=>{
         simulation.velocityDecay(+(document.querySelector("span.drag-value").innerHTML = drag = +target.value));
         restart();
     });
     document.querySelector("input[name=reheat]").addEventListener("click", ()=>restart());
 
-    document.querySelector("input").addEventListener("input", ({target})=>{
-        restart();
-        cooling=target.checked;
+    document.querySelector("input[name=disable-temp]").addEventListener("input", ({target})=>{
+        if(target.checked) simulation.alpha(1);
+        simulation.alphaDecay(target.checked?0: (1 - 0.001** (1 / 300)));
     });
 
-    document.querySelector("input[name=connections]").addEventListener("change", ({target}) => {
+    document.querySelector("input[name=connections]").addEventListener("input", ({target}) => {
         numLinks = parseInt(target.value);
         document.querySelector("span.connections-count").innerHTML = numLinks;
         updateGraph();
@@ -78,7 +77,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
     
     // PAUSE
-    document.addEventListener("keydown", ({ key }) => (key === " " ? forcesEnabled = !forcesEnabled : undefined) && false);
+    document.querySelector('input[name=pause]').addEventListener("change", ({ target }) => {forcesEnabled = target.checked});
 
 
     // HELPERS
@@ -100,7 +99,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             .force('charge', d3.forceManyBody().strength(charge))
             .force('center', d3.forceCenter(width / 2, height / 2))
             .force('link', d3.forceLink().links(graph.links).distance(n=>n.value).id(d=>d.id))
-            .on('end', ()=>!cooling && restart())
             .velocityDecay(drag)
             .stop();
         svg.call(d3.zoom().on("zoom", e => d3.selectAll('svg > g').attr('transform', e.transform)))
@@ -142,6 +140,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     node.fy = null;
                 }))
             .attr('r', 7.5)
+        // dragging dots
             
         const fps = d3.select("span.fps");
         let lastTick = Date.now();
@@ -161,11 +160,15 @@ document.addEventListener("DOMContentLoaded", async () => {
                         : undefined
                 );
             node
+            // .attr('transform', d => `translate(${d.x}, ${d.y})`)
                 .attr("cx", node=>node.x)
                 .attr("cy", node=>node.y)
                 .attr('fill', node => node.focused?"#ff0":node.defaultFill)
+            // .attr('cx', d => d.x)
+            // .attr('cy', d => d.y);
             let fps_num = 1000/(nowTick - lastTick);
             fps.html(Math.round(fps_num));
+            // requestIdleCallback(()=>document.querySelector("svg > style").innerHTML = document.querySelector("svg > style").innerHTML.replace(/all (\d+\.\d*|NaN) linear/,`all ${fps_num.toString()} linear`))
             lastTick = nowTick;
             rafHandle = requestAnimationFrame(renderer);
         }
@@ -174,6 +177,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         return {simulation, node, link, cleanup(){
             node.remove();
             link.remove();
+            // svg.clear();
             cancelAnimationFrame(rafHandle);
         }};
     }
